@@ -77,4 +77,64 @@ document.addEventListener('DOMContentLoaded', function() {
         card.style.minHeight = '420px';
       });
     }
+
+    document.querySelectorAll('.carousel').forEach(function(carousel) {
+      const track = carousel.querySelector('.carousel-track');
+      const prevBtn = carousel.querySelector('.carousel-btn.prev');
+      const nextBtn = carousel.querySelector('.carousel-btn.next');
+
+      if (!track || !prevBtn || !nextBtn) {
+        return;
+      }
+
+      const scrollByAmount = () => {
+        const card = track.querySelector('.carousel-card');
+        if (card) {
+          return card.offsetWidth + 25;
+        }
+        return track.clientWidth + 25;
+      };
+
+      prevBtn.addEventListener('click', function() {
+        const amount = scrollByAmount();
+        track.scrollBy({ left: -amount, behavior: 'smooth' });
+        track.scrollLeft -= amount;
+      });
+
+      nextBtn.addEventListener('click', function() {
+        const amount = scrollByAmount();
+        track.scrollBy({ left: amount, behavior: 'smooth' });
+        track.scrollLeft += amount;
+      });
+    });
+
+    const openReserva = document.getElementById('open-reserva');
+    const modal = document.getElementById('reserva-modal');
+
+    if (openReserva && modal) {
+      const closeModal = () => {
+        modal.classList.remove('is-open');
+        document.body.classList.remove('modal-open');
+        modal.setAttribute('aria-hidden', 'true');
+      };
+
+      const openModal = () => {
+        modal.classList.add('is-open');
+        document.body.classList.add('modal-open');
+        modal.setAttribute('aria-hidden', 'false');
+      };
+
+      openReserva.addEventListener('click', openModal);
+      modal.addEventListener('click', function(e) {
+        if (e.target && e.target.matches('[data-close="modal"]')) {
+          closeModal();
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+          closeModal();
+        }
+      });
+    }
   });
