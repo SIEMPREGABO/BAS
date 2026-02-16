@@ -1,286 +1,277 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Beauty & Soul</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="css/styles.css" />
+<?php $pageTitle = "Inicio"; ?>
+<?php include 'includes/header.php'; ?>
 
-      <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-</head>
-<body>
-
-<!-- HEADER -->
-<header class="header">
-    <div class="container header-grid">
-        <button class="menu-btn">☰</button>
-
-        <h1 class="logo">
-            beauty <span>& </span>soul
-        </h1>
-
-        <div class="header-icons">
-            <a href="#">🛒</a>
-            <a href="#">📷</a>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h2>Belleza que inspira tu bienestar</h2>
+            <p>Relájate y renueva con nuestros tratamientos.</p>
+            <button class="btn-primary pulse" id="open-reserva" type="button">Reserva ahora</button>
         </div>
-    </div>
-</header>
+    </section>
 
-<!-- HERO -->
-<section class="hero">
-    <div class="container hero-content">
-        <h2>Belleza que inspira tu bienestar</h2>
-        <p>Relájate y renueva con nuestros tratamientos.</p>
-        <button class="btn-primary pulse" id="open-reserva" type="button">Reserva ahora</button>
-    </div>
-</section>
+    <!-- SERVICIOS -->
+    <section class="section">
+        <div class="container">
+            <h3 class="section-title">Nuestros masajes</h3>
 
-<!-- SERVICIOS -->
-<section class="section">
-    <div class="container">
-        <h3 class="section-title">Nuestros masajes</h3>
+            <div class="carousel">
+                <button class="carousel-btn prev" type="button" aria-label="Anterior">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="carousel-track">
+                    <?php
+                    $services = [
+                        ['Masaje', 'Relajante', '<i class="fa-solid fa-hot-tub-person"></i>', ['50 min', '80 min'], [ '$250', '$300']],
+                        ['Masaje', 'Descontracturante', '<i class="fa-solid fa-hand-back-fist"></i>', ['50 min', '80 min'], [ '$250', '$300']],
+                        ['Masaje', 'Sueco', '<i class="fa-solid fa-person-swimming"></i>', ['50 min', '80 min'], [ '$250', '$300']],
+                        ['Masaje', 'Terapéutico', '<i class="fa-solid fa-heart-pulse"></i>', ['50 min', '80 min'], ['$300', '$350']],
+                        ['Masaje', 'Deportivo', '<i class="fa-solid fa-dumbbell"></i>', ['50 min', '80 min'], ['$300', '$350']],
+                        ['Masaje', 'Con Ventosas', '<i class="fa-solid fa-hand-sparkles"></i>', ['50 min', '80 min'], ['$300', '$350']],
+                        ['Masaje', 'Drenaje Linfático', '<i class="fa-solid fa-water"></i>', ['50 min', '80 min'], ['$250', '$300']],
+                    ];
 
-        <div class="carousel">
-            <button class="carousel-btn prev" type="button" aria-label="Anterior">
-                <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            <div class="carousel-track">
-            <?php
-            $services = [
-                ['Masaje', 'Relajante'],
-                ['Masaje', 'Descontracturante'],
-                ['Masaje', 'Sueco'],
-                ['Masaje', 'Terapéutico'],
-                ['Masaje', 'Deportivo'],
-                ['Masaje', 'Drenaje Linfático'],
-                ['Masaje', 'Con Ventosas'],
-            ];
+                    foreach ($services as $index => $service): 
+                        $serviceName = $service[0] . ' ' . $service[1];
+                    ?>
+                        <div class="card carousel-card service-card-container">
+                            <div class="icon"><?= $service[2] ?></div>
+                            <h4><?= $service[0] ?></h4>
+                            <p><?= $service[1] ?></p>
 
-            foreach ($services as $service): ?>
-                <div class="card carousel-card">
-                    <div class="icon">✿</div>
-                    <h4><?= $service[0] ?></h4>
-                    <p><?= $service[1] ?></p>
-                    <a href="#" class="btn-link">Ver más</a>
+                            <div class="service-float-section">
+                                <!-- <h6><i class="fa-solid fa-clock"></i> Duración y Precio</h6> -->
+                                <div class="service-pricing-list">
+                                    <?php 
+                                    $durations = $service[3];
+                                    $prices = $service[4];
+                                    for ($i = 0; $i < count($durations); $i++): 
+                                    ?>
+                                        <div class="service-pricing-item" 
+                                             data-service="<?= htmlspecialchars($serviceName) ?>" 
+                                             data-duration="<?= htmlspecialchars($durations[$i]) ?>"
+                                             role="button"
+                                             tabindex="0">
+                                            <span class="service-duration">
+                                                <i class="fa-solid fa-clock"></i> <?= $durations[$i] ?>
+                                            </span>
+                                            <!-- <span class="service-arrow">→</span> -->
+                                            <span class="service-price-value">
+                                                <i class="fa-solid fa-tag"></i> <?= $prices[$i] ?>
+                                            </span>
+                                        </div>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                            
+                            <a href="#" class="btn-link service-more-link glightbox-link" 
+                               data-service="<?= htmlspecialchars($serviceName) ?>"
+                               data-gallery="gallery-<?= $index ?>">
+                                <i class="fa-solid fa-images"></i> Ver galería
+                            </a>
+                            
+                            <!-- Galería de imágenes (ocultas) -->
+                            <div class="service-gallery" style="display: none;" data-gallery-id="gallery-<?= $index ?>">
+                                <!-- Placeholder images - Reemplazar con imágenes reales -->
+                                <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+1" 
+                                   class="glightbox" 
+                                   data-gallery="gallery-<?= $index ?>"
+                                   data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 1"></a>
+                                <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+2" 
+                                   class="glightbox" 
+                                   data-gallery="gallery-<?= $index ?>"
+                                   data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 2"></a>
+                                <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+3" 
+                                   class="glightbox" 
+                                   data-gallery="gallery-<?= $index ?>"
+                                   data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 3"></a>
+                                <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+4" 
+                                   class="glightbox" 
+                                   data-gallery="gallery-<?= $index ?>"
+                                   data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 4"></a>
+                            </div>
+
+                            <!-- <a href="#" class="btn-link service-more-btn" data-service="<?= $index ?>">Ver más</a> -->
+
+                            <!-- Card flotante -->
+                            <!-- <div class="service-float-card" id="service-card-<?= $index ?>">
+                                <button class="service-float-close" aria-label="Cerrar"><i class="fa-solid fa-x"></i></button>
+                                <h5 class="service-float-title"><?= $service[0] ?> <?= $service[1] ?></h5>
+
+                                <div class="service-float-section">
+                                    <h6><i class="fa-solid fa-clock"></i> Duración</h6>
+                                    <div class="service-options">
+                                        <?php foreach ($service[3] as $duration): ?>
+                                            <span class="service-option"><?= $duration ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+
+                                <div class="service-float-section">
+                                    <h6><i class="fa-solid fa-tag"></i> Precio</h6>
+                                    <div class="service-options">
+                                        <?php foreach ($service[4] as $price): ?>
+                                            <span class="service-option service-price"><?= $price ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
-            </div>
-            <button class="carousel-btn next" type="button" aria-label="Siguiente">
-                <i class="fa-solid fa-chevron-right"></i>
-            </button>
-        </div>
-    </div>
-</section>
-
-<!-- PRODUCTOS -->
-<section class="section bg-light">
-    <div class="container">
-        <h3 class="section-title">Productos Destacados</h3>
-
-        <div class="grid grid-4">
-            <?php for ($i = 1; $i <= 4; $i++): ?>
-                <div class="card product-card">
-                    <div class="product-image"></div>
-                    <h4>Producto Ejemplo</h4>
-                    <span class="price">$600 MXN</span>
-                    <a href="#" class="btn-primary small">Ver producto</a>
-                </div>
-            <?php endfor; ?>
-        </div>
-    </div>
-</section>
-
-<!-- BENEFICIOS -->
-<section class="section">
-    <div class="container">
-        <div class="grid grid-3 center">
-            <div class="feature">
-                <span>✔</span>
-                <p>Calidad Profesional</p>
-            </div>
-            <div class="feature">
-                <span>🎧</span>
-                <p>Atención Personalizada</p>
-            </div>
-            <div class="feature">
-                <span>🌸</span>
-                <p>Ambiente Relajante</p>
+                <button class="carousel-btn next" type="button" aria-label="Siguiente">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- TESTIMONIOS -->
-<section class="section bg-soft">
-    <div class="container">
-        <h3 class="section-title">Testimonios</h3>
-
-        <div class="testimonial">
-            <p>“Excelente servicio y un ambiente muy relajante.”</p>
-            <span>— Laura M.</span>
-        </div>
-    </div>
-</section>
-
-<!-- CONTACTO -->
-<section class="section contact-section">
-    <div class="container contact-grid">
-        <div>
-            <h3 class="section-title contact-title">Contáctanos</h3>
-            <p class="contact-intro">Estamos aquí para responder cualquier pregunta que tengas sobre nuestros servicios.</p>
-            <ul class="contact-list">
-                <li>
-                    <span class="contact-icon"><i class="fa-solid fa-location-dot"></i></span>
-                    <div>
-                        <strong>Dirección</strong>
-                        <p>Calle Olivo, La Isla, 54935 San Pablo de las Salinas, Méx.</p>
-                    </div>
-                </li>
-                <li>
-                    <span class="contact-icon"><i class="fa-solid fa-phone"></i></span>
-                    <div>
-                        <strong>Teléfono</strong>
-                        <p>56 2576 4706</p>
-                    </div>
-                </li>
-                <li>
-                    <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span>
-                    <div>
-                        <strong>Email</strong>
-                        <p>reservaciones@beautyandsoul.com</p>
-                    </div>
-                </li>
-                <li>
-                    <span class="contact-icon"><i class="fa-solid fa-clock"></i></span>
-                    <div>
-                        <strong>Horario</strong>
-                        <p>Sábados: 5:30pm a 8:00pm</p>
-                        <p>Domingos: 10:00am a 06:00pm</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="contact-map">
-            <iframe
-                title="Mapa Beauty & Soul"
-                src="https://www.google.com/maps?q=Calle%20Olivo%2C%20La%20Isla%2C%2054935%20San%20Pablo%20de%20las%20Salinas%2C%20M%C3%A9x.&output=embed"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-    </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-    <div class="container footer-grid">
-        <div>
-            <h5>Enlaces</h5>
-            <a href="#">Inicio</a>
-            <a href="#">Servicios</a>
-            <a href="#">Productos</a>
-            <a href="#">Contacto</a>
-        </div>
-
-        <div>
-            <h5>Contacto</h5>
-            <p>Tel: 555 123 4567</p>
-            <p>Email: info@beautyandsoul.com</p>
-        </div>
-
-        <div>
-            <h5>Síguenos</h5>
-            <a href="#">Instagram</a>
-            <a href="#">Facebook</a>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <div class="container footer-bottom-content">
-            <p>© 2025 Beauty & Soul - Todos los derechos reservados / Desarrollado por <span class="footer-brand">XIPELY</span></p>
-        </div>
-    </div>
-</footer>
-
-<!-- BOTONES FLOTANTES -->
-<div class="social-float">
-    <a href="https://www.facebook.com/share/14kCMCcHzf/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
-        <i class="fa-brands fa-facebook-f"></i>
-    </a>
-    <a href="https://www.tiktok.com/@beautyandsoul.cabina?_t=ZM-8vZVtla2F54&_r=1" target="_blank" aria-label="TikTok">
-        <i class="fa-brands fa-tiktok"></i>
-    </a>
-    <a href="https://wa.me/525625764706?text=Hola%2C%20he%20visto%20su%20p%C3%A1gina%20y%20estoy%20muy%20interesad%40%20en%20reservar%20un%20servicio.%20%E2%9D%A4%EF%B8%8F" target="_blank" aria-label="WhatsApp">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
-</div>
-
-<!-- MODAL RESERVA -->
-<div class="modal" id="reserva-modal" aria-hidden="true">
-    <div class="modal-backdrop" data-close="modal"></div>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reserva-title">
-        <button class="modal-close" type="button" aria-label="Cerrar" data-close="modal"><i class="fa-solid fa-x"></i></button>
-        <h3 class="modal-title" id="reserva-title">Reserva tu Servicio</h3>
-        <form class="reserva-form">
-            <div class="form-section">
-                <p class="form-section-title">Contacto del cliente</p>
-                <div class="form-grid">
-                    <input type="text" name="nombre" placeholder="Nombre Completo" required />
-                    <input type="tel" name="telefono" placeholder="Teléfono" required />
-                    <input class="full" type="email" name="correo" placeholder="Correo Electrónico" required />
-                </div>
-            </div>
-            <div class="form-section">
-                <p class="form-section-title">Detalles del servicio</p>
-                <div class="form-grid">
-                    <select name="servicio" required>
-                        <option value="">Selecciona un servicio</option>
-                        <option>Drenaje Linfático (Masaje)</option>
-                        <option>Masaje con Ventosas (Masaje)</option>
-                        <option>Masaje Deportivo (Masaje)</option>
-                        <option>Masaje Descontracturante (Masaje)</option>
-                        <option>Masaje Relajante (Masaje)</option>
-                        <option>Masaje Sueco (Masaje)</option>
-                        <option>Masaje Terapéutico (Masaje)</option>
-                        <option>Antiacné (Facial)</option>
-                        <option>Antiedad (Facial)</option>
-                        <option>Drenaje Facial (Facial)</option>
-                        <option>Fototerapia LED (Facial)</option>
-                        <option>Hidratante (Facial)</option>
-                        <option>Limpieza Facial Profunda (Facial)</option>
-                        <option>Microdermoabrasión (Facial)</option>
-                        <option>Reafirmante (Facial)</option>
-                        <option>Regenerante (Facial)</option>
+    <!-- FACIALES -->
+    <section class="section bg-soft">
+        <div class="container">
+            <h3 class="section-title">Tratamientos Faciales</h3>
+            
+            <div class="facial-selector-container">
+                <div class="form-group">
+                    <label for="facial-select" class="facial-label">
+                        <i class="fa-solid fa-spa"></i> Selecciona un tratamiento facial
+                    </label>
+                    <select id="facial-select" class="facial-select">
+                        
+                        <option value="limpieza" data-description="Elimina impurezas, puntos negros y células muertas." data-duration="90 min" data-price="$300">Limpieza Facial Profunda</option>
+                        <option value="hidratante" data-description="Aporta hidratación profunda y devuelve luminosidad." data-duration="90 min" data-price="$300">Hidratante</option>
+                        <option value="antiedad" data-description="Estimula la producción de colágeno y suaviza líneas de expresión." data-duration="90 min" data-price="$350">Antiedad</option>
+                        <option value="antiacne" data-description="Trata el acné y previene futuras imperfecciones." data-duration="90 min" data-price="$300">Antiacné</option>
+                        <option value="regenerante" data-description="Restaura, nutre y revitaliza la piel." data-duration="90 min" data-price="$300">Regenerante</option>
+                        <option value="reafirmante" data-description="Mejora la firmeza y elasticidad del rostro." data-duration="90 min" data-price="$300">Reafirmante</option>
+                        <option value="microdermoabrasion" data-description="Exfolia y renueva la superficie cutánea." data-duration="90 min" data-price="$350">Microdermoabrasión</option>
+                        <option value="fototerapia" data-description="Tecnología de luz para combatir acné, manchas y arrugas." data-duration="90 min" data-price="$350">Fototerapia LED</option>
+                        <option value="drenaje" data-description="Estimula la circulación y reduce la retención de líquidos." data-duration="90 min" data-price="$350">Drenaje Facial</option>
                     </select>
-                    <select name="duracion" required>
-                        <option value="">Selecciona duración</option>
-                        <option>30 min</option>
-                        <option>45 min</option>
-                        <option>60 min</option>
-                        <option>90 min</option>
-                    </select>
-                    <input type="date" name="fecha" required />
-                    <select name="hora" required>
-                        <option value="">Selecciona una hora</option>
-                        <option>09:00</option>
-                        <option>10:30</option>
-                        <option>12:00</option>
-                        <option>14:00</option>
-                        <option>16:00</option>
-                        <option>18:00</option>
-                    </select>
-                    <textarea class="full" name="notas" rows="3" placeholder="Notas adicionales (opcional)"></textarea>
+                </div>
+
+                <div id="facial-info" class="facial-info" style="display: none;">
+                    <div class="facial-description-card">
+                        <h4 id="facial-name" class="facial-name"></h4>
+                        <p id="facial-description" class="facial-description"></p>
+                        
+                        <div class="facial-details">
+                            <div class="facial-detail-item">
+                                <i class="fa-solid fa-clock"></i>
+                                <span id="facial-duration"></span>
+                            </div>
+                            <div class="facial-detail-item">
+                                <i class="fa-solid fa-tag"></i>
+                                <span id="facial-price"></span>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary facial-reserve-btn" id="facial-reserve-btn" type="button">
+                            <i class="fa-solid fa-calendar-check"></i> Reservar ahora
+                        </button>
+                    </div>
                 </div>
             </div>
-            <button class="btn-primary modal-submit" type="submit">Confirmar Reservación</button>
-        </form>
-    </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="js/main.js"></script>
+        </div>
+    </section>
 
-</body>
-</html>
+    <!-- PRODUCTOS -->
+    <section class="section bg-light">
+        <div class="container">
+            <h3 class="section-title">Productos Destacados</h3>
+
+            <div class="grid grid-4">
+                <?php for ($i = 1; $i <= 4; $i++): ?>
+                    <div class="card product-card">
+                        <div class="product-image"></div>
+                        <h4>Producto Ejemplo</h4>
+                        <span class="price">$600 MXN</span>
+                        <a href="#" class="btn-primary small">Ver producto</a>
+                    </div>
+                <?php endfor; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- BENEFICIOS -->
+    <section class="section">
+        <div class="container">
+            <div class="grid grid-3 center">
+                <div class="feature">
+                    <span>✔</span>
+                    <p>Calidad Profesional</p>
+                </div>
+                <div class="feature">
+                    <span>🎧</span>
+                    <p>Atención Personalizada</p>
+                </div>
+                <div class="feature">
+                    <span>🌸</span>
+                    <p>Ambiente Relajante</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="section bg-soft">
+        <div class="container">
+            <h3 class="section-title">Testimonios</h3>
+
+            <div class="testimonial">
+                <p>“Excelente servicio y un ambiente muy relajante.”</p>
+                <span>— Laura M.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="section contact-section">
+        <div class="container contact-grid">
+            <div>
+                <h3 class="section-title contact-title">Contáctanos</h3>
+                <p class="contact-intro">Estamos aquí para responder cualquier pregunta que tengas sobre nuestros servicios.</p>
+                <ul class="contact-list">
+                    <li>
+                        <span class="contact-icon"><i class="fa-solid fa-location-dot"></i></span>
+                        <div>
+                            <strong>Dirección</strong>
+                            <p>Calle Olivo, La Isla, 54935 San Pablo de las Salinas, Méx.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="contact-icon"><i class="fa-solid fa-phone"></i></span>
+                        <div>
+                            <strong>Teléfono</strong>
+                            <p>56 2576 4706</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span>
+                        <div>
+                            <strong>Email</strong>
+                            <p>reservaciones@beautyandsoul.com</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="contact-icon"><i class="fa-solid fa-clock"></i></span>
+                        <div>
+                            <strong>Horario</strong>
+                            <p>Sábados: 5:30pm a 8:00pm</p>
+                            <p>Domingos: 10:00am a 06:00pm</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="contact-map">
+                <iframe
+                    title="Mapa Beauty & Soul"
+                    src="https://www.google.com/maps?q=Calle%20Olivo%2C%20La%20Isla%2C%2054935%20San%20Pablo%20de%20las%20Salinas%2C%20M%C3%A9x.&output=embed"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
+
+<?php include 'includes/footer.php'; ?>
