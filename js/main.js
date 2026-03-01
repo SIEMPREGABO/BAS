@@ -19,18 +19,50 @@ $(document).ready(function() {
         }
     });
     
-    // Smooth scrolling para enlaces
+    // Smooth scrolling para enlaces con hash
     $('a[href*="#"]').on('click', function(e) {
-        e.preventDefault();
+        var href = $(this).attr('href');
         
-        $('html, body').animate(
-            {
-                scrollTop: $($(this).attr('href')).offset().top - 70,
-            },
-            500,
-            'linear'
-        );
+        // Extraer el hash del href
+        var hash = href.includes('#') ? href.substring(href.indexOf('#')) : '';
+        
+        // Verificar si el hash no está vacío y el elemento existe
+        if (hash && hash !== '#' && $(hash).length) {
+            // Si el link incluye una página (como index.php#masajes)
+            if (href.includes('.php') && !href.startsWith('#')) {
+                // Extraer la página
+                var page = href.substring(0, href.indexOf('#'));
+                var currentPage = window.location.pathname.split('/').pop();
+                
+                // Si estamos en la misma página, hacer scroll
+                if (page === currentPage || page === '' || page === 'index.php' && currentPage === '') {
+                    e.preventDefault();
+                    $('html, body').animate({
+                        scrollTop: $(hash).offset().top - 80
+                    }, 600, 'swing');
+                }
+                // Si no, dejar que navegue normalmente
+            } else {
+                // Es un enlace interno simple (#masajes)
+                e.preventDefault();
+                $('html, body').animate({
+                    scrollTop: $(hash).offset().top - 80
+                }, 600, 'swing');
+            }
+        }
     });
+    
+    // Scroll automático si hay hash en la URL al cargar
+    if (window.location.hash) {
+        setTimeout(function() {
+            var hash = window.location.hash;
+            if ($(hash).length) {
+                $('html, body').animate({
+                    scrollTop: $(hash).offset().top - 80
+                }, 600, 'swing');
+            }
+        }, 100);
+    }
     
     // Volver arriba
     $('.back-to-top').click(function() {
@@ -45,6 +77,190 @@ $(document).ready(function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Menú móvil toggle
+    const menuBtnMobile = document.querySelector('.menu-btn-mobile');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    if (menuBtnMobile && mobileMenu) {
+        menuBtnMobile.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            // Cambiar icono del menú
+            this.textContent = mobileMenu.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // Cerrar menú al hacer click en un link
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+          if (this.id === 'mobile-membresias-trigger') {
+            return;
+          }
+                mobileMenu.classList.remove('active');
+                menuBtnMobile.textContent = '☰';
+            });
+        });
+    }
+
+    // Botones de "Agendar Cita" en el header
+    const headerAgendarBtn = document.getElementById('header-agendar');
+    const mobileAgendarBtn = document.getElementById('mobile-agendar');
+    const openReservaBtn = document.getElementById('open-reserva');
+
+    if (headerAgendarBtn && openReservaBtn) {
+        headerAgendarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openReservaBtn.click();
+        });
+    }
+
+    if (mobileAgendarBtn && openReservaBtn) {
+        mobileAgendarBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openReservaBtn.click();
+        });
+    }
+
+    // Subnav de membresías (hover + click persistente)
+    const header = document.querySelector('.header');
+    const membershipsTrigger = document.getElementById('membresias-trigger');
+    const membershipsSubnav = document.getElementById('membresias-subnav');
+    let membershipsPinned = false;
+    let closeMembersTimeout = null;
+
+    const isDesktopHeader = () => window.matchMedia('(min-width: 969px)').matches;
+
+    const openMemberships = () => {
+      if (!header || !membershipsSubnav || !membershipsTrigger) return;
+      header.classList.add('memberships-open');
+      membershipsSubnav.setAttribute('aria-hidden', 'false');
+      membershipsTrigger.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeMemberships = (force = false) => {
+      if (!header || !membershipsSubnav || !membershipsTrigger) return;
+      if (membershipsPinned && !force) return;
+      header.classList.remove('memberships-open');
+      membershipsSubnav.setAttribute('aria-hidden', 'true');
+      membershipsTrigger.setAttribute('aria-expanded', 'false');
+    };
+
+    const scheduleMembershipsClose = () => {
+      if (closeMembersTimeout) {
+        clearTimeout(closeMembersTimeout);
+      }
+      closeMembersTimeout = setTimeout(() => {
+        closeMemberships();
+      }, 100);
+    };
+
+    if (header && membershipsTrigger && membershipsSubnav) {
+      membershipsTrigger.addEventListener('mouseenter', function() {
+        if (!isDesktopHeader()) return;
+        if (closeMembersTimeout) clearTimeout(closeMembersTimeout);
+        openMemberships();
+      });
+
+      membershipsTrigger.addEventListener('mouseleave', function() {
+        if (!isDesktopHeader() || membershipsPinned) return;
+        scheduleMembershipsClose();
+      });
+
+      membershipsSubnav.addEventListener('mouseenter', function() {
+        if (!isDesktopHeader()) return;
+        if (closeMembersTimeout) clearTimeout(closeMembersTimeout);
+        openMemberships();
+      });
+
+      membershipsSubnav.addEventListener('mouseleave', function() {
+        if (!isDesktopHeader() || membershipsPinned) return;
+        scheduleMembershipsClose();
+      });
+
+      membershipsTrigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        membershipsPinned = !membershipsPinned;
+
+        if (membershipsPinned) {
+          if (closeMembersTimeout) clearTimeout(closeMembersTimeout);
+          openMemberships();
+        } else {
+          closeMemberships(true);
+        }
+      });
+
+      document.addEventListener('click', function(e) {
+        const clickedInside = membershipsTrigger.contains(e.target) || membershipsSubnav.contains(e.target);
+        if (!clickedInside) {
+          membershipsPinned = false;
+          closeMemberships(true);
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          membershipsPinned = false;
+          closeMemberships(true);
+        }
+      });
+
+      window.addEventListener('resize', function() {
+        if (!isDesktopHeader()) {
+          membershipsPinned = false;
+          closeMemberships(true);
+        }
+      });
+    }
+
+    // Modal de membresías para móvil (< 969px)
+    const mobileMembershipsTrigger = document.getElementById('mobile-membresias-trigger');
+    const mobileMembershipsModal = document.getElementById('memberships-mobile-modal');
+    const mobileMembershipsClose = document.querySelectorAll('[data-close="memberships-mobile-modal"]');
+    const isMobileMembershipsViewport = () => window.matchMedia('(max-width: 968px)').matches;
+
+    const openMobileMembershipsModal = () => {
+      if (!mobileMembershipsModal || !mobileMembershipsTrigger) return;
+      mobileMembershipsModal.classList.add('is-open');
+      mobileMembershipsModal.setAttribute('aria-hidden', 'false');
+      mobileMembershipsTrigger.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('modal-open');
+    };
+
+    const closeMobileMembershipsModal = () => {
+      if (!mobileMembershipsModal || !mobileMembershipsTrigger) return;
+      mobileMembershipsModal.classList.remove('is-open');
+      mobileMembershipsModal.setAttribute('aria-hidden', 'true');
+      mobileMembershipsTrigger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('modal-open');
+    };
+
+    if (mobileMembershipsTrigger && mobileMembershipsModal) {
+      mobileMembershipsTrigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!isMobileMembershipsViewport()) {
+          return;
+        }
+        openMobileMembershipsModal();
+      });
+
+      mobileMembershipsClose.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          closeMobileMembershipsModal();
+        });
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMembershipsModal.classList.contains('is-open')) {
+          closeMobileMembershipsModal();
+        }
+      });
+
+      window.addEventListener('resize', function() {
+        if (!isMobileMembershipsViewport()) {
+          closeMobileMembershipsModal();
+        }
+      });
+    }
+
     // Configuración solo para móvil
     if (window.innerWidth < 768) {
       const scrollContainer = document.querySelector('.services-mobile-scroll');
@@ -114,27 +330,168 @@ document.addEventListener('DOMContentLoaded', function() {
     const duracionSelect = document.getElementById('duracion-select');
 
     if (modal) {
+      const durationInitiallyRequired = duracionSelect ? duracionSelect.required : false;
+
+      const isSelectedServicePackage = () => {
+        if (!servicioSelect) return false;
+        const selectedOption = servicioSelect.options[servicioSelect.selectedIndex];
+        return !!selectedOption && selectedOption.getAttribute('data-is-package') === '1';
+      };
+
+      const isSelectedServiceFacial = () => {
+        if (!servicioSelect) return false;
+        const selectedOption = servicioSelect.options[servicioSelect.selectedIndex];
+        if (!selectedOption) return false;
+        const optionText = (selectedOption.textContent || '').toLowerCase();
+        const optionValue = (selectedOption.value || '').toLowerCase();
+        return optionText.includes('(facial)') || optionValue.includes('(facial)');
+      };
+
+        const isSelectedServiceMassage = () => {
+          if (!servicioSelect) return false;
+          const selectedOption = servicioSelect.options[servicioSelect.selectedIndex];
+          if (!selectedOption) return false;
+          const optionText = (selectedOption.textContent || '').toLowerCase();
+          const optionValue = (selectedOption.value || '').toLowerCase();
+          return optionText.includes('masaje') || optionValue.includes('masaje');
+        };
+
+      const getSelectedServiceDuration = () => {
+        if (!servicioSelect) return '';
+        const selectedOption = servicioSelect.options[servicioSelect.selectedIndex];
+        if (!selectedOption) return '';
+        return selectedOption.getAttribute('data-duration') || '';
+      };
+
+      const setDurationState = (disabled, fixedValue = '') => {
+        if (!duracionSelect) return;
+        duracionSelect.disabled = disabled;
+        duracionSelect.required = disabled ? false : durationInitiallyRequired;
+        if (disabled) {
+          duracionSelect.value = fixedValue;
+        }
+      };
+
+        const setDurationOptions = (allowedValues = null) => {
+          if (!duracionSelect) return;
+
+          const normalizedAllowed = allowedValues ? allowedValues.map(value => value.toLowerCase()) : null;
+
+          Array.from(duracionSelect.options).forEach(option => {
+            if (!option.value) {
+              option.disabled = false;
+              option.hidden = false;
+              return;
+            }
+
+            if (!normalizedAllowed) {
+              option.disabled = false;
+              option.hidden = false;
+              return;
+            }
+
+            const isAllowed = normalizedAllowed.includes(option.value.toLowerCase());
+            option.disabled = !isAllowed;
+            option.hidden = !isAllowed;
+          });
+        };
+
+      const syncDurationByService = (forcePackage = null, forceFacial = null, fixedDuration = null) => {
+        const isPackageService = forcePackage === null ? isSelectedServicePackage() : !!forcePackage;
+        const isFacialService = forceFacial === null ? isSelectedServiceFacial() : !!forceFacial;
+        const isMassageService = isSelectedServiceMassage();
+        const selectedServiceDuration = getSelectedServiceDuration();
+        const durationToUse = fixedDuration || selectedServiceDuration;
+
+        if (isPackageService) {
+          setDurationOptions(durationToUse ? [durationToUse] : null);
+          setDurationState(true, durationToUse || '');
+          return;
+        }
+
+        if (isFacialService) {
+          setDurationOptions([durationToUse || '90 min']);
+          setDurationState(true, durationToUse || '90 min');
+          return;
+        }
+
+        if (isMassageService) {
+          setDurationOptions(['50 min', '80 min']);
+          setDurationState(false);
+
+          if (fixedDuration && duracionSelect) {
+            duracionSelect.value = fixedDuration;
+          } else if (duracionSelect && !['50 min', '80 min'].includes(duracionSelect.value)) {
+            duracionSelect.value = '';
+          }
+          return;
+        }
+
+        setDurationOptions(null);
+        setDurationState(false);
+        if (fixedDuration && duracionSelect) {
+          duracionSelect.value = fixedDuration;
+        }
+      };
+
+      const findServiceOptionValue = (serviceName, preferFacial = false) => {
+        if (!servicioSelect || !serviceName) return '';
+
+        const normalizedServiceName = serviceName.trim().toLowerCase();
+        const options = Array.from(servicioSelect.options);
+
+        const exactByValue = options.find(option => (option.value || '').trim().toLowerCase() === normalizedServiceName);
+        if (exactByValue) return exactByValue.value;
+
+        const exactByText = options.find(option => (option.textContent || '').trim().toLowerCase() === normalizedServiceName);
+        if (exactByText) return exactByText.value;
+
+        if (preferFacial) {
+          const facialByName = options.find(option => {
+            const optionText = (option.textContent || '').trim().toLowerCase();
+            return optionText.includes(normalizedServiceName) && optionText.includes('(facial)');
+          });
+          if (facialByName) return facialByName.value;
+        }
+
+        const partial = options.find(option => {
+          const optionValue = (option.value || '').trim().toLowerCase();
+          const optionText = (option.textContent || '').trim().toLowerCase();
+          return optionValue.includes(normalizedServiceName) || optionText.includes(normalizedServiceName);
+        });
+
+        return partial ? partial.value : '';
+      };
+
       const closeModal = () => {
         modal.classList.remove('is-open');
         document.body.classList.remove('modal-open');
         modal.setAttribute('aria-hidden', 'true');
       };
 
-      const openModal = (serviceName = null, duration = null) => {
+      const openModal = (serviceName = null, duration = null, isPackage = null, isFacial = null) => {
         modal.classList.add('is-open');
         document.body.classList.add('modal-open');
         modal.setAttribute('aria-hidden', 'false');
         
         // Pre-seleccionar el servicio si se proporciona
         if (serviceName && servicioSelect) {
-          servicioSelect.value = serviceName;
+          const optionValue = findServiceOptionValue(serviceName, !!isFacial);
+          if (optionValue) {
+            servicioSelect.value = optionValue;
+          }
         }
-        
-        // Pre-seleccionar la duración si se proporciona
-        if (duration && duracionSelect) {
-          duracionSelect.value = duration;
-        }
+
+        syncDurationByService(isPackage, isFacial, duration);
       };
+
+      if (servicioSelect) {
+        servicioSelect.addEventListener('change', () => {
+          syncDurationByService();
+        });
+      }
+
+      syncDurationByService();
 
       // Botón principal "Reserva ahora"
       if (openReserva) {
@@ -146,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
         item.addEventListener('click', function() {
           const serviceName = this.getAttribute('data-service');
           const duration = this.getAttribute('data-duration');
-          openModal(serviceName, duration);
+          openModal(serviceName, duration, false, false);
         });
         
         // Accesibilidad: permitir Enter/Space para activar
@@ -155,8 +512,17 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const serviceName = this.getAttribute('data-service');
             const duration = this.getAttribute('data-duration');
-            openModal(serviceName, duration);
+            openModal(serviceName, duration, false, false);
           }
+        });
+      });
+
+      // Botones de agendar paquete
+      document.querySelectorAll('.package-agendar-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          const serviceName = this.getAttribute('data-service');
+          const duration = this.getAttribute('data-duration');
+          openModal(serviceName, duration, true, false);
         });
       });
 
@@ -261,43 +627,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (facialSelect) {
       console.log('Facial select found, adding event listener');
-
-      document.addEventListener('DOMContentLoaded', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        
-        if (this.value === '') {
-          // Si no hay selección, ocultar la información
-          facialInfo.style.display = 'none';
-        } else {
-          // Mostrar la información del facial seleccionado
-          const description = selectedOption.getAttribute('data-description');
-          const duration = selectedOption.getAttribute('data-duration');
-          const price = selectedOption.getAttribute('data-price');
-          const name = selectedOption.text;
-          
-          facialName.textContent = name;
-          facialDescription.textContent = description;
-          facialDuration.textContent = duration;
-          facialPrice.textContent = price;
-          
-          // Mostrar el contenedor de información con animación
-          facialInfo.style.display = 'block';
-          facialInfo.classList.add('fade-in');
-          
-          // Guardar información del servicio para la reserva
-          facialReserveBtn.setAttribute('data-service', name);
-          facialReserveBtn.setAttribute('data-duration', duration);
-        }
-      });
       
-      facialSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
+      // Función para actualizar la información del facial
+      const updateFacialInfo = function() {
+        const selectedOption = facialSelect.options[facialSelect.selectedIndex];
         
-        if (this.value === '') {
-          // Si no hay selección, ocultar la información
-          facialInfo.style.display = 'none';
-        } else {
-          // Mostrar la información del facial seleccionado
+        if (facialSelect.value !== '') {
+          // Actualizar la información del facial seleccionado
           const description = selectedOption.getAttribute('data-description');
           const duration = selectedOption.getAttribute('data-duration');
           const price = selectedOption.getAttribute('data-price');
@@ -308,43 +644,53 @@ document.addEventListener('DOMContentLoaded', function() {
           facialDuration.textContent = duration;
           facialPrice.textContent = price;
           
-          // Mostrar el contenedor de información con animación
-          facialInfo.style.display = 'block';
-          facialInfo.classList.add('fade-in');
-          
           // Guardar información del servicio para la reserva
           facialReserveBtn.setAttribute('data-service', name);
           facialReserveBtn.setAttribute('data-duration', duration);
         }
-      });
+      };
+      
+      // Event listener para cambios en el select
+      facialSelect.addEventListener('change', updateFacialInfo);
+      
+      // Cargar información inicial al cargar la página
+      updateFacialInfo();
+    }
 
-      // Manejar clic en el botón de reservar
-      if (facialReserveBtn) {
-        facialReserveBtn.addEventListener('click', function() {
-          const serviceName = this.getAttribute('data-service');
-          const duration = this.getAttribute('data-duration');
+    // Manejar clic en el botón de reservar
+    if (facialReserveBtn) {
+      facialReserveBtn.addEventListener('click', function() {
+        const serviceName = this.getAttribute('data-service');
+        const duration = this.getAttribute('data-duration') || '90 min';
+        
+        // Abrir el formulario de reserva con el servicio pre-seleccionado
+        const reservaBtn = document.getElementById('open-reserva');
+        if (reservaBtn) {
+          reservaBtn.click();
           
-          // Abrir el formulario de reserva con el servicio pre-seleccionado
-          const reservaBtn = document.getElementById('open-reserva');
-          if (reservaBtn) {
-            reservaBtn.click();
-            
-            // Esperar un poco y luego pre-seleccionar el servicio
-            setTimeout(function() {
-              const serviceSelect = document.getElementById('service');
-              if (serviceSelect) {
-                // Buscar la opción que coincida con el nombre del servicio
-                for (let i = 0; i < serviceSelect.options.length; i++) {
-                  if (serviceSelect.options[i].text.includes(serviceName)) {
-                    serviceSelect.selectedIndex = i;
-                    serviceSelect.dispatchEvent(new Event('change'));
-                    break;
-                  }
+          // Esperar un poco y luego pre-seleccionar el servicio
+          setTimeout(function() {
+            const serviceSelect = document.getElementById('servicio-select');
+            const durationSelect = document.getElementById('duracion-select');
+            if (serviceSelect) {
+              // Buscar opción facial que coincida por nombre
+              for (let i = 0; i < serviceSelect.options.length; i++) {
+                const optionText = (serviceSelect.options[i].text || '').toLowerCase();
+                if (optionText.includes((serviceName || '').toLowerCase()) && optionText.includes('(facial)')) {
+                  serviceSelect.selectedIndex = i;
+                  serviceSelect.dispatchEvent(new Event('change'));
+                  break;
                 }
               }
-            }, 300);
-          }
-        });
-      }
+
+              if (durationSelect) {
+                durationSelect.value = duration;
+                durationSelect.disabled = true;
+                durationSelect.required = false;
+              }
+            }
+          }, 300);
+        }
+      });
     }
   });

@@ -2,8 +2,8 @@
 <?php include 'includes/header.php'; ?>
 
     <!-- HERO MASAJISTA -->
-    <section class="hero">
-        <div class="container hero-content">
+    <section class="hero-nosotros">
+        <div class="container hero-nosotros-content">
             <h2>Conoce a tu Masajista</h2>
             <p>Experiencia, dedicación y pasión por el bienestar</p>
         </div>
@@ -15,16 +15,16 @@
             <div class="masajista-profile">
                 <div class="masajista-image">
                     <!-- Placeholder - Reemplazar con imagen real -->
-                    <img src="https://via.placeholder.com/400x500/d9a7a1/ffffff?text=Foto+Masajista" alt="Masajista Beauty & Soul">
+                    <img src="./images/nosotros.jpeg" alt="Masajista Beauty & Soul">
                 </div>
                 
                 <div class="masajista-info">
-                    <h3 class="masajista-name">Nombre de la Masajista</h3>
+                    <h3 class="masajista-name">Ángela Valeria Tenorio Jiménez</h3>
                     <p class="masajista-title">Terapeuta Profesional Certificada</p>
                     
                     <div class="masajista-bio">
                         <p>
-                            Con más de <strong>10 años de experiencia</strong> en el arte del masaje terapéutico, 
+                            Con <strong>5 años de experiencia</strong> en el arte del masaje terapéutico, 
                             me dedico a proporcionar una experiencia única de relajación y bienestar a cada uno de mis clientes.
                         </p>
                         <p>
@@ -47,14 +47,20 @@
         <div class="container">
             <h3 class="section-title">Certificaciones y Especialidades</h3>
             
-            <div class="grid grid-3">
+            <div class="grid grid-3 cert-grid-centered">
                 <div class="cert-card">
                     <div class="cert-icon">
                         <i class="fa-solid fa-certificate"></i>
                     </div>
                     <h4>Certificación Profesional</h4>
                     <p>Título en Terapia de Masaje</p>
-                    <p class="cert-year">2014</p>
+                    <a href="images/CERTIFICACION1.jpeg" class="service-more-link glightbox" data-gallery="certificaciones-gallery" >
+                        <i class="fa-solid fa-images"></i> Ver certificaciones
+                    </a>
+                    <div style="display: none;" aria-hidden="true">
+                        <a href="images/CERTIFICACION2.jpeg" class="glightbox" data-gallery="certificaciones-gallery" ></a>
+                        <a href="images/CERTIFICACION3.jpeg" class="glightbox" data-gallery="certificaciones-gallery" ></a>
+                    </div>
                 </div>
                 
                 <div class="cert-card">
@@ -63,7 +69,6 @@
                     </div>
                     <h4>Masaje Sueco</h4>
                     <p>Especialización en técnicas nórdicas</p>
-                    <p class="cert-year">2015</p>
                 </div>
                 
                 <div class="cert-card">
@@ -72,7 +77,6 @@
                     </div>
                     <h4>Drenaje Linfático</h4>
                     <p>Técnica especializada certificada</p>
-                    <p class="cert-year">2017</p>
                 </div>
                 
                 <div class="cert-card">
@@ -81,7 +85,6 @@
                     </div>
                     <h4>Masaje Deportivo</h4>
                     <p>Terapia para atletas</p>
-                    <p class="cert-year">2018</p>
                 </div>
                 
                 <div class="cert-card">
@@ -90,7 +93,6 @@
                     </div>
                     <h4>Ventosaterapia</h4>
                     <p>Técnicas con ventosas</p>
-                    <p class="cert-year">2019</p>
                 </div>
                 
                 <div class="cert-card">
@@ -99,7 +101,6 @@
                     </div>
                     <h4>Aromaterapia</h4>
                     <p>Uso terapéutico de aceites esenciales</p>
-                    <p class="cert-year">2020</p>
                 </div>
             </div>
         </div>
@@ -111,11 +112,6 @@
             <div class="philosophy-section">
                 <h3 class="section-title">Mi Filosofía</h3>
                 <div class="philosophy-content">
-                    <blockquote class="philosophy-quote">
-                        "Cada cuerpo cuenta una historia única. Mi misión es escuchar esa historia 
-                        a través del tacto y proporcionar el cuidado personalizado que cada persona merece."
-                    </blockquote>
-                    
                     <div class="philosophy-values">
                         <div class="value-item">
                             <i class="fa-solid fa-heart"></i>
@@ -135,13 +131,18 @@
                             <p>Equilibrio entre cuerpo, mente y espíritu</p>
                         </div>
                     </div>
+
+                    <div class="philosophy-image-space">
+                        <img style="object-fit: cover; width: 100%; height: 100%;border-radius: 14px;" 
+                        src="./images/filosofia.png" alt="Filosofía de Masajista Beauty & Soul">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- EXPERIENCIA -->
-    <section class="section bg-soft">
+    <!-- <section class="section bg-soft">
         <div class="container">
             <h3 class="section-title">Trayectoria</h3>
             
@@ -179,7 +180,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- CTA RESERVA -->
     <section class="section cta-section">

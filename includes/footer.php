@@ -29,7 +29,7 @@
     </footer>
 
     <!-- BOTONES FLOTANTES -->
-    <div class="social-float">
+    <!-- <div class="social-float">
         <a href="https://www.facebook.com/share/14kCMCcHzf/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
             <i class="fa-brands fa-facebook-f"></i>
         </a>
@@ -39,7 +39,7 @@
         <a href="https://wa.me/525625764706?text=Hola%2C%20he%20visto%20su%20p%C3%A1gina%20y%20estoy%20muy%20interesad%40%20en%20reservar%20un%20servicio.%20%E2%9D%A4%EF%B8%8F" target="_blank" aria-label="WhatsApp">
             <i class="fa-brands fa-whatsapp"></i>
         </a>
-    </div>
+    </div> -->
 
     <!-- MODAL RESERVA -->
     <div class="modal" id="reserva-modal" aria-hidden="true">
@@ -61,6 +61,14 @@
                     <div class="form-grid">
                         <select name="servicio" id="servicio-select" required>
                             <option value="">Selecciona un servicio</option>
+                            <option value="Brisa de serenidad" data-is-package="1" data-duration="120 min">Brisa de serenidad (Paquete)</option>
+                            <option value="Esencia radiante" data-is-package="1" data-duration="105 min">Esencia radiante (Paquete)</option>
+                            <option value="Detox &amp; Equilibrio" data-is-package="1" data-duration="120 min">Detox &amp; Equilibrio (Paquete)</option>
+                            <option value="Ritual cuerpo &amp; alma" data-is-package="1" data-duration="135 min">Ritual cuerpo &amp; alma (Paquete)</option>
+                            <option value="Día glow cumpleañera/o" data-is-package="1" data-duration="105 min">Día glow cumpleañera/o (Paquete)</option>
+                            <option value="Calma profunda" data-is-package="1" data-duration="120 min">Calma profunda (Paquete)</option>
+                            <option value="Día zen express" data-is-package="1" data-duration="90 min">Día zen express (Paquete)</option>
+                            <option value="Mini ritual de amor" data-is-package="1" data-duration="100 min">Mini ritual de amor (Paquete)</option>
                             <option value="Masaje Relajante">Masaje Relajante</option>
                             <option value="Masaje Descontracturante">Masaje Descontracturante</option>
                             <option value="Masaje Sueco">Masaje Sueco</option>
@@ -86,6 +94,10 @@
                             <option>60 min</option>
                             <option>80 min</option>
                             <option>90 min</option>
+                            <option>100 min</option>
+                            <option>105 min</option>
+                            <option>120 min</option>
+                            <option>135 min</option>
                         </select>
                         <input type="date" name="fecha" required />
                         <select name="hora" required>
@@ -109,6 +121,7 @@
     <!-- GLightbox JS -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/js/glightbox.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/social-widget.js"></script>
 
 </body>
 
