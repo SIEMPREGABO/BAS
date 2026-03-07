@@ -262,37 +262,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Configuración solo para móvil
-    if (window.innerWidth < 768) {
-      const scrollContainer = document.querySelector('.services-mobile-scroll');
-      const cards = document.querySelectorAll('.services-scroll-wrapper .service-card');
+    // if (window.innerWidth < 768) {
+    //   const scrollContainer = document.querySelector('.services-mobile-scroll');
+    //   const cards = document.querySelectorAll('.services-scroll-wrapper .service-card');
       
-      // Añadir indicadores de scroll (opcional)
-      const indicators = document.createElement('div');
-      indicators.className = 'scroll-indicators';
-      cards.forEach((_, index) => {
-        const dot = document.createElement('span');
-        dot.className = 'scroll-indicator';
-        if (index === 0) dot.classList.add('active');
-        indicators.appendChild(dot);
-      });
-      scrollContainer.parentNode.insertBefore(indicators, scrollContainer.nextSibling);
+    //   // Añadir indicadores de scroll (opcional)
+    //   const indicators = document.createElement('div');
+    //   indicators.className = 'scroll-indicators';
+    //   cards.forEach((_, index) => {
+    //     const dot = document.createElement('span');
+    //     dot.className = 'scroll-indicator';
+    //     if (index === 0) dot.classList.add('active');
+    //     indicators.appendChild(dot);
+    //   });
+    //   scrollContainer.parentNode.insertBefore(indicators, scrollContainer.nextSibling);
       
-      // Actualizar indicadores al hacer scroll
-      scrollContainer.addEventListener('scroll', function() {
-        const scrollPosition = scrollContainer.scrollLeft;
-        const cardWidth = cards[0].offsetWidth + 15; // + gap
-        const activeIndex = Math.round(scrollPosition / cardWidth);
+    //   // Actualizar indicadores al hacer scroll
+    //   scrollContainer.addEventListener('scroll', function() {
+    //     const scrollPosition = scrollContainer.scrollLeft;
+    //     const cardWidth = cards[0].offsetWidth + 15; // + gap
+    //     const activeIndex = Math.round(scrollPosition / cardWidth);
         
-        document.querySelectorAll('.scroll-indicator').forEach((dot, index) => {
-          dot.classList.toggle('active', index === activeIndex);
-        });
-      });
+    //     document.querySelectorAll('.scroll-indicator').forEach((dot, index) => {
+    //       dot.classList.toggle('active', index === activeIndex);
+    //     });
+    //   });
       
-      // Hacer las tarjetas un poco más grandes en móvil
-      cards.forEach(card => {
-        card.style.minHeight = '420px';
-      });
-    }
+    //   // Hacer las tarjetas un poco más grandes en móvil
+    //   cards.forEach(card => {
+    //     card.style.minHeight = '420px';
+    //   });
+    // }
 
     document.querySelectorAll('.carousel').forEach(function(carousel) {
       const track = carousel.querySelector('.carousel-track');
@@ -330,7 +330,75 @@ document.addEventListener('DOMContentLoaded', function() {
     const duracionSelect = document.getElementById('duracion-select');
 
     if (modal) {
+      const reservaForm = modal.querySelector('.reserva-form');
+      const fechaInput = modal.querySelector('input[name="fecha"]');
       const durationInitiallyRequired = duracionSelect ? duracionSelect.required : false;
+
+      const formatDateForInput = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const buildDateWindow = () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const maxDate = new Date(today);
+        maxDate.setMonth(maxDate.getMonth() + 1);
+
+        return {
+          min: today,
+          max: maxDate,
+          minString: formatDateForInput(today),
+          maxString: formatDateForInput(maxDate)
+        };
+      };
+
+      const isWeekendDate = (dateValue) => {
+        if (!dateValue) return false;
+        const selectedDate = new Date(`${dateValue}T00:00:00`);
+        const dayOfWeek = selectedDate.getDay();
+        return dayOfWeek === 0 || dayOfWeek === 6;
+      };
+
+      const isWithinAllowedRange = (dateValue) => {
+        if (!dateValue) return false;
+        const selectedDate = new Date(`${dateValue}T00:00:00`);
+        const dateWindow = buildDateWindow();
+        return selectedDate >= dateWindow.min && selectedDate <= dateWindow.max;
+      };
+
+      const updateDateInputConstraints = () => {
+        if (!fechaInput) return;
+        const dateWindow = buildDateWindow();
+        fechaInput.min = dateWindow.minString;
+        fechaInput.max = dateWindow.maxString;
+      };
+
+      const validateFechaInput = () => {
+        if (!fechaInput) return true;
+
+        const value = fechaInput.value;
+        if (!value) {
+          fechaInput.setCustomValidity('');
+          return true;
+        }
+
+        if (!isWithinAllowedRange(value)) {
+          fechaInput.setCustomValidity('Solo puedes reservar desde hoy y hasta un mes a partir de hoy.');
+          return false;
+        }
+
+        if (!isWeekendDate(value)) {
+          fechaInput.setCustomValidity('Solo se permiten reservas en sábado o domingo.');
+          return false;
+        }
+
+        fechaInput.setCustomValidity('');
+        return true;
+      };
 
       const isSelectedServicePackage = () => {
         if (!servicioSelect) return false;
@@ -405,13 +473,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isPackageService) {
           setDurationOptions(durationToUse ? [durationToUse] : null);
-          setDurationState(true, durationToUse || '');
+          setDurationState(false);
+          if (duracionSelect) {
+            duracionSelect.value = durationToUse || '';
+          }
           return;
         }
 
         if (isFacialService) {
-          setDurationOptions([durationToUse || '90 min']);
-          setDurationState(true, durationToUse || '90 min');
+          setDurationOptions(['90 min']);
+          setDurationState(false);
+          if (duracionSelect) {
+            duracionSelect.value = '90 min';
+          }
           return;
         }
 
@@ -434,11 +508,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       };
 
-      const findServiceOptionValue = (serviceName, preferFacial = false) => {
-        if (!servicioSelect || !serviceName) return '';
+      const findServiceOptionValue = (serviceIdentifier, preferFacial = false) => {
+        if (!servicioSelect || serviceIdentifier === null || serviceIdentifier === undefined) return '';
 
-        const normalizedServiceName = serviceName.trim().toLowerCase();
+        const normalizedIdentifier = String(serviceIdentifier).trim();
+        if (!normalizedIdentifier) return '';
+
         const options = Array.from(servicioSelect.options);
+
+        const exactById = options.find(option => String(option.value).trim() === normalizedIdentifier);
+        if (exactById) return exactById.value;
+
+        const normalizedServiceName = normalizedIdentifier.toLowerCase();
 
         const exactByValue = options.find(option => (option.value || '').trim().toLowerCase() === normalizedServiceName);
         if (exactByValue) return exactByValue.value;
@@ -469,14 +550,17 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.setAttribute('aria-hidden', 'true');
       };
 
-      const openModal = (serviceName = null, duration = null, isPackage = null, isFacial = null) => {
+      const openModal = (serviceIdentifier = null, duration = null, isPackage = null, isFacial = null) => {
         modal.classList.add('is-open');
         document.body.classList.add('modal-open');
         modal.setAttribute('aria-hidden', 'false');
+
+        updateDateInputConstraints();
+        validateFechaInput();
         
         // Pre-seleccionar el servicio si se proporciona
-        if (serviceName && servicioSelect) {
-          const optionValue = findServiceOptionValue(serviceName, !!isFacial);
+        if (serviceIdentifier && servicioSelect) {
+          const optionValue = findServiceOptionValue(serviceIdentifier, !!isFacial);
           if (optionValue) {
             servicioSelect.value = optionValue;
           }
@@ -488,6 +572,28 @@ document.addEventListener('DOMContentLoaded', function() {
       if (servicioSelect) {
         servicioSelect.addEventListener('change', () => {
           syncDurationByService();
+        });
+      }
+
+      if (fechaInput) {
+        updateDateInputConstraints();
+        fechaInput.addEventListener('input', validateFechaInput);
+        fechaInput.addEventListener('change', validateFechaInput);
+      }
+
+      if (reservaForm && fechaInput) {
+        reservaForm.addEventListener('submit', function(e) {
+          const formData = new FormData(reservaForm);
+          const payload = Object.fromEntries(formData.entries());
+          console.log('Datos de reservación (modal):', payload);
+
+          updateDateInputConstraints();
+          const isValidDate = validateFechaInput();
+
+          if (!isValidDate) {
+            e.preventDefault();
+            fechaInput.reportValidity();
+          }
         });
       }
 
@@ -645,7 +751,7 @@ document.addEventListener('DOMContentLoaded', function() {
           facialPrice.textContent = price;
           
           // Guardar información del servicio para la reserva
-          facialReserveBtn.setAttribute('data-service', name);
+          facialReserveBtn.setAttribute('data-service-id', selectedOption.value);
           facialReserveBtn.setAttribute('data-duration', duration);
         }
       };
@@ -660,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manejar clic en el botón de reservar
     if (facialReserveBtn) {
       facialReserveBtn.addEventListener('click', function() {
-        const serviceName = this.getAttribute('data-service');
+        const serviceId = this.getAttribute('data-service-id');
         const duration = this.getAttribute('data-duration') || '90 min';
         
         // Abrir el formulario de reserva con el servicio pre-seleccionado
@@ -673,20 +779,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const serviceSelect = document.getElementById('servicio-select');
             const durationSelect = document.getElementById('duracion-select');
             if (serviceSelect) {
-              // Buscar opción facial que coincida por nombre
-              for (let i = 0; i < serviceSelect.options.length; i++) {
-                const optionText = (serviceSelect.options[i].text || '').toLowerCase();
-                if (optionText.includes((serviceName || '').toLowerCase()) && optionText.includes('(facial)')) {
-                  serviceSelect.selectedIndex = i;
-                  serviceSelect.dispatchEvent(new Event('change'));
-                  break;
-                }
+              if (serviceId) {
+                serviceSelect.value = serviceId;
+                serviceSelect.dispatchEvent(new Event('change'));
               }
 
               if (durationSelect) {
                 durationSelect.value = duration;
-                durationSelect.disabled = true;
-                durationSelect.required = false;
+                durationSelect.disabled = false;
+                durationSelect.required = true;
               }
             }
           }, 300);

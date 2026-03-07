@@ -106,7 +106,25 @@ class SpaAdmin {
         }
         
         // Obtener precio del servicio
-        $servicePrice = $this->getServicePrice($data['id_servicio'], $data['duracion']);
+
+        $mapPricePackets = [
+            17 => 750,
+            18 => 700,
+            19 => 800,
+            20 => 820,
+            21 => 700,
+            22 => 750,
+            23 => 520,
+            24 => 700,
+        ];
+
+        if(isset($mapPricePackets[$data['id_servicio']])) {
+            $servicePrice = $mapPricePackets[$data['id_servicio']];
+        } else {
+            $servicePrice = $this->getServicePrice($data['id_servicio'], $data['duracion']);
+        }
+
+        //$servicePrice = $this->getServicePrice($data['id_servicio'], $data['duracion']);
         if ($servicePrice === false) {
             throw new Exception('Servicio no válido o no encontrado');
         }

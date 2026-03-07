@@ -1,6 +1,17 @@
 <?php $pageTitle = "Inicio"; ?>
 <?php include 'includes/header.php'; ?>
 
+<?php
+// Mostrar todos los errores de PHP
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Iniciar el log
+error_log("Iniciando procesamiento del formulario de reserva");
+?>
+
+
 <!-- HERO -->
 <!-- <section class="hero">
     <div class="container hero-content">
@@ -192,15 +203,15 @@
                                 <i class="fa-solid fa-spa"></i> Selecciona un tratamiento facial
                             </label>
                             <select id="facial-select" class="facial-select">
-                                <option value="limpieza" data-description="Elimina impurezas, puntos negros y células muertas." data-duration="90 min" data-price="$300" selected>Limpieza Facial Profunda</option>
-                                <option value="hidratante" data-description="Aporta hidratación profunda y devuelve luminosidad." data-duration="90 min" data-price="$300">Hidratante</option>
-                                <option value="antiedad" data-description="Estimula la producción de colágeno y suaviza líneas de expresión." data-duration="90 min" data-price="$350">Antiedad</option>
-                                <option value="antiacne" data-description="Trata el acné y previene futuras imperfecciones." data-duration="90 min" data-price="$300">Antiacné</option>
-                                <option value="regenerante" data-description="Restaura, nutre y revitaliza la piel." data-duration="90 min" data-price="$300">Regenerante</option>
-                                <option value="reafirmante" data-description="Mejora la firmeza y elasticidad del rostro." data-duration="90 min" data-price="$300">Reafirmante</option>
-                                <option value="microdermoabrasion" data-description="Exfolia y renueva la superficie cutánea." data-duration="90 min" data-price="$350">Microdermoabrasión</option>
-                                <option value="fototerapia" data-description="Tecnología de luz para combatir acné, manchas y arrugas." data-duration="90 min" data-price="$350">Fototerapia LED</option>
-                                <option value="drenaje" data-description="Estimula la circulación y reduce la retención de líquidos." data-duration="90 min" data-price="$350">Drenaje Facial</option>
+                                <option value="8" data-description="Elimina impurezas, puntos negros y células muertas." data-duration="90 min" data-price="$300" selected>Limpieza Facial Profunda</option>
+                                <option value="9" data-description="Aporta hidratación profunda y devuelve luminosidad." data-duration="90 min" data-price="$300">Hidratante</option>
+                                <option value="10" data-description="Estimula la producción de colágeno y suaviza líneas de expresión." data-duration="90 min" data-price="$350">Antiedad</option>
+                                <option value="11" data-description="Trata el acné y previene futuras imperfecciones." data-duration="90 min" data-price="$300">Antiacné</option>
+                                <option value="12" data-description="Restaura, nutre y revitaliza la piel." data-duration="90 min" data-price="$300">Regenerante</option>
+                                <option value="13" data-description="Mejora la firmeza y elasticidad del rostro." data-duration="90 min" data-price="$300">Reafirmante</option>
+                                <option value="14" data-description="Exfolia y renueva la superficie cutánea." data-duration="90 min" data-price="$350">Microdermoabrasión</option>
+                                <option value="15" data-description="Tecnología de luz para combatir acné, manchas y arrugas." data-duration="90 min" data-price="$350">Fototerapia LED</option>
+                                <option value="16" data-description="Estimula la circulación y reduce la retención de líquidos." data-duration="90 min" data-price="$350">Drenaje Facial</option>
                             </select>
                         </div>
 
@@ -278,7 +289,7 @@
                     ['Día glow cumpleañera/o', ['Masaje relajante', 'Facial iluminador', 'Spa de manos'], '<i class="fa-solid fa-dumbbell"></i>', ['105 min'], ['700']],
                     ['Calma profunda', ['Masaje descontracturante', 'Facial refrescante', 'Drenaje linfático'], '<i class="fa-solid fa-hand-sparkles"></i>', ['120 min'], ['$750']],
                     ['Día zen express', ['Masaje corporal express', 'Facial oxigenante', 'Spa de manos'], '<i class="fa-solid fa-water"></i>', ['90 min'], ['$520']],
-                    ['Mini ritual de amor', ['Masaje relajante', 'Facial express', 'Spa de manos'], '<i class="fa-solid fa-water"></i>', ['100 min'], ['$520']],
+                    ['Mini ritual de amor', ['Masaje relajante', 'Facial express', 'Spa de manos'], '<i class="fa-solid fa-water"></i>', ['100 min'], ['$700']],
 
                 ];
 
@@ -400,35 +411,35 @@
         <h3 class="section-title">Fotos</h3>
 
         <div class="grid grid-3 package-gallery-grid">
-            <a href="images/galeria1.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria1.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery">
                 <img src="images/galeria1.jpeg" alt="Galería 1">
             </a>
-            <a href="images/galeria2.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria2.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery">
                 <img src="images/galeria2.jpeg" alt="Galería 2">
             </a>
-            <a href="images/galeria3.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria3.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery">
                 <img src="images/galeria3.jpeg" alt="Galería 3">
             </a>
-            <a href="images/galeria4.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria4.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery">
                 <img src="images/galeria4.jpeg" alt="Galería 4">
             </a>
-            <a href="images/galeria5.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria5.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery">
                 <img src="images/galeria5.jpeg" alt="Galería 5">
             </a>
-            <a href="images/galeria6.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria6.jpeg" class="package-gallery-card glightbox" data-gallery="package-gallery">
                 <img src="images/galeria6.jpeg" alt="Galería 6">
             </a>
 
-            <a href="images/galeria7.jpeg" class="package-gallery-card package-gallery-more glightbox" data-gallery="package-gallery" >
+            <a href="images/galeria7.jpeg" class="package-gallery-card package-gallery-more glightbox" data-gallery="package-gallery">
                 <span>Ver más</span>
             </a>
         </div>
 
         <div style="display: none;" aria-hidden="true">
-            <a href="images/galeria8.jpeg" class="glightbox" data-gallery="package-gallery" ></a>
-            <a href="images/galeria9.jpeg" class="glightbox" data-gallery="package-gallery" ></a>
-            <a href="images/galeria10.jpeg" class="glightbox" data-gallery="package-gallery" ></a>
-            <a href="images/galeria11.jpeg" class="glightbox" data-gallery="package-gallery" ></a>
+            <a href="images/galeria8.jpeg" class="glightbox" data-gallery="package-gallery"></a>
+            <a href="images/galeria9.jpeg" class="glightbox" data-gallery="package-gallery"></a>
+            <a href="images/galeria10.jpeg" class="glightbox" data-gallery="package-gallery"></a>
+            <a href="images/galeria11.jpeg" class="glightbox" data-gallery="package-gallery"></a>
         </div>
     </div>
 </section>
@@ -514,6 +525,119 @@
         </div>
     </div>
 </section>
+
+<div class="modal<?= $_SERVER['REQUEST_METHOD'] === 'POST' ? ' is-open' : '' ?>" id="reserva-modal" aria-hidden="<?= $_SERVER['REQUEST_METHOD'] === 'POST' ? 'false' : 'true' ?>">
+    <div class="modal-backdrop" data-close="modal"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reserva-title">
+        <?php
+        // Procesar el formulario solo cuando se envía
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                require_once 'spa_admin.php';
+                $spaAdmin = new SpaAdmin();
+
+                $reservationData = array(
+                    'nombre' => $_POST['nombre'] ?? '',
+                    'email' => $_POST['email'] ?? '',
+                    'telefono' => $_POST['telefono'] ?? '',
+                    'id_servicio' => $_POST['servicio'] ?? '',
+                    'duracion' => $_POST['duracion'] ?? '',
+                    'fecha' => $_POST['fecha'] ?? '',
+                    'hora' => $_POST['hora'] ?? '',
+                    'notas' => $_POST['notas'] ?? ''
+                );
+
+                $result = $spaAdmin->createReservation($reservationData);
+
+                if (!empty($result['success'])) {
+                    echo '<div class="alert alert-success">¡Reservación confirmada! Tu número de reservación es: ' . $result['reservation_id'] . '</div>';
+                } else {
+                    $message = isset($result['message']) ? $result['message'] : 'No se pudo procesar la reservación.';
+                    echo '<div class="alert alert-danger">' . $message . '</div>';
+                }
+            } catch (Throwable $e) {
+                echo '<div class="alert alert-danger">Ocurrió un error al procesar la reservación.</div>';
+            }
+        }
+        ?>
+
+        <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+            <script>
+                document.body.classList.add('modal-open');
+            </script>
+        <?php endif; ?>
+
+        <button class="modal-close" type="button" aria-label="Cerrar" data-close="modal"><i class="fa-solid fa-x"></i></button>
+        <h3 class="modal-title" id="reserva-title">Reserva tu Servicio</h3>
+        <form id="reserva-form" class="reserva-form" method="POST">
+            <div class="form-section">
+                <p class="form-section-title">Contacto del cliente</p>
+                <div class="form-grid">
+                    <input type="text" name="nombre" placeholder="Nombre Completo" required />
+                    <input type="tel" name="telefono" placeholder="Teléfono" required />
+                    <input class="full" type="email" name="email" placeholder="Correo Electrónico" required />
+                </div>
+            </div>
+            <div class="form-section">
+                <p class="form-section-title">Detalles del servicio</p>
+                <div class="form-grid">
+                    <select name="servicio" id="servicio-select" required>
+                        <option value="">Selecciona un servicio</option>
+                        <option value="17" data-is-package="1" data-duration="120 min">Brisa de serenidad (Paquete)</option>
+                        <option value="18" data-is-package="1" data-duration="105 min">Esencia radiante (Paquete)</option>
+                        <option value="19" data-is-package="1" data-duration="120 min">Detox &amp; Equilibrio (Paquete)</option>
+                        <option value="20" data-is-package="1" data-duration="135 min">Ritual cuerpo &amp; alma (Paquete)</option>
+                        <option value="21" data-is-package="1" data-duration="105 min">Día glow cumpleañera/o (Paquete)</option>
+                        <option value="22" data-is-package="1" data-duration="120 min">Calma profunda (Paquete)</option>
+                        <option value="23" data-is-package="1" data-duration="90 min">Día zen express (Paquete)</option>
+                        <option value="24" data-is-package="1" data-duration="100 min">Mini ritual de amor (Paquete)</option>
+                        <option value="1">Masaje Relajante</option>
+                        <option value="2">Masaje Descontracturante</option>
+                        <option value="3">Masaje Sueco</option>
+                        <option value="5">Masaje Terapéutico</option>
+                        <option value="4">Masaje Deportivo</option>
+                        <option value="6">Masaje Con Ventosas</option>
+                        <option value="7">Masaje Drenaje Linfático</option>
+                        <option value="11">Antiacné (Facial)</option>
+                        <option value="10">Antiedad (Facial)</option>
+                        <option value="16">Drenaje Facial (Facial)</option>
+                        <option value="15">Fototerapia LED (Facial)</option>
+                        <option value="9">Hidratante (Facial)</option>
+                        <option value="8">Limpieza Facial Profunda (Facial)</option>
+                        <option value="14">Microdermoabrasión (Facial)</option>
+                        <option value="13">Reafirmante (Facial)</option>
+                        <option value="12">Regenerante (Facial)</option>
+                    </select>
+                    <select name="duracion" id="duracion-select" required>
+                        <option value="">Selecciona duración</option>
+                        <option>30 min</option>
+                        <option>45 min</option>
+                        <option>50 min</option>
+                        <option>60 min</option>
+                        <option>80 min</option>
+                        <option>90 min</option>
+                        <option>100 min</option>
+                        <option>105 min</option>
+                        <option>120 min</option>
+                        <option>135 min</option>
+                    </select>
+                    <input type="date" name="fecha" required />
+                    <select name="hora" required>
+                        <option value="">Selecciona una hora</option>
+                        <option>09:00</option>
+                        <option>10:30</option>
+                        <option>12:00</option>
+                        <option>14:00</option>
+                        <option>16:00</option>
+                        <option>18:00</option>
+                    </select>
+                    <textarea class="full" name="notas" rows="3" placeholder="Notas adicionales (opcional)"></textarea>
+                </div>
+            </div>
+            <button class="btn-primary modal-submit" type="submit">Confirmar Reservación</button>
+        </form>
+    </div>
+</div>
 
 <!-- BOTÓN FLOTANTE WHATSAPP -->
 <a href="https://wa.me/5625764706" target="_blank" class="whatsapp-float-btn" aria-label="Contactar por WhatsApp" rel="noopener noreferrer">
