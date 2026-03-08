@@ -248,7 +248,7 @@ class Appointment {
     }
 
     // Check appointment availability
-    public function checkAvailability($startDateTime, $duration) {
+    public function checkAvailability($startDateTime, $duration, $excludeId = null) {
         $conn = $this->db->connect();
         
         $endDateTime = date('Y-m-d H:i:s', strtotime("+$duration minutes", strtotime($startDateTime)));
@@ -256,14 +256,20 @@ class Appointment {
         $query = 'SELECT COUNT(*) as count 
                  FROM ' . $this->table . ' 
                  WHERE (
-                     (:start BETWEEN fecha_hora AND DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) OR
-                     (:end BETWEEN fecha_hora AND DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) OR
-                     (fecha_hora BETWEEN :start AND :end)
+                     (:start < DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) AND
+                     (:end > fecha_hora)
                  ) AND estado IN ("pendiente", "confirmada")';
+        
+        if ($excludeId !== null) {
+            $query .= ' AND id_cita != :exclude_id';
+        }
         
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':start', $startDateTime);
         $stmt->bindParam(':end', $endDateTime);
+        if ($excludeId !== null) {
+            $stmt->bindParam(':exclude_id', $excludeId, PDO::PARAM_INT);
+        }
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
