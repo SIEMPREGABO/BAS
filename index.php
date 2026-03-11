@@ -621,15 +621,9 @@ error_log("Iniciando procesamiento del formulario de reserva");
                         <option>120 min</option>
                         <option>135 min</option>
                     </select>
-                    <input type="date" name="fecha" required />
-                    <select name="hora" required>
-                        <option value="">Selecciona una hora</option>
-                        <option>09:00</option>
-                        <option>10:30</option>
-                        <option>12:00</option>
-                        <option>14:00</option>
-                        <option>16:00</option>
-                        <option>18:00</option>
+                    <input type="date" name="fecha" id="fecha-input" required />
+                    <select name="hora" id="hora-select" required>
+                        <option value="">Primero selecciona una fecha</option>
                     </select>
                     <textarea class="full" name="notas" rows="3" placeholder="Notas adicionales (opcional)"></textarea>
                 </div>

@@ -9,9 +9,7 @@
         --spa-hover: #e3f2ef;
     }
 
-    .navbar {
-
-    }
+    .navbar {}
 
     .navbar-brand {
         font-weight: bold;
@@ -122,9 +120,15 @@
                 <li class="nav-item dropdown user-dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                         <img src="images/user-avatar.png" height="40" width="40" alt="Usuario" class="me-2">
-                        <?php //echo $_SESSION['usuario']['nombre']; ?>
+                        <?php //echo $_SESSION['usuario']['nombre']; 
+                        ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="dashboard.php"><i class="bi bi-house-door me-2"></i> Inicio</a></li>
+                        <li><a class="dropdown-item" href="citas.php"><i class="bi bi-calendar-check me-2"></i> Citas</a></li>
+                        <li><a class="dropdown-item" href="clientes.php"><i class="bi bi-people me-2"></i> Clientes</a></li>
+                        <li><a class="dropdown-item" href="users.php"><i class="bi bi-people me-2"></i> Usuarios</a></li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -135,99 +139,99 @@
         </div>
     </div>
 </nav>
- <script>
-     document.addEventListener('DOMContentLoaded', function() {
-         // Cargar notificaciones al abrir el dropdown
-         document.querySelector('.dropdown-toggle').addEventListener('click', function() {
-             loadNotifications();
-         });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar notificaciones al abrir el dropdown
+        document.querySelector('.dropdown-toggle').addEventListener('click', function() {
+            loadNotifications();
+        });
 
-         // Marcar como leída al hacer clic en una notificación
-         document.querySelector('.notification-dropdown').addEventListener('click', function(e) {
-             if (e.target.classList.contains('notification-item')) {
-                 const notificationId = e.target.dataset.id;
-                 markAsRead(notificationId);
-                 e.target.remove();
-                 updateNotificationCounter();
-             }
-         });
-     });
+        // Marcar como leída al hacer clic en una notificación
+        document.querySelector('.notification-dropdown').addEventListener('click', function(e) {
+            if (e.target.classList.contains('notification-item')) {
+                const notificationId = e.target.dataset.id;
+                markAsRead(notificationId);
+                e.target.remove();
+                updateNotificationCounter();
+            }
+        });
+    });
 
-     function loadNotifications() {
-         fetch('get_notifications.php')
-             .then(response => {
-                 if (!response.ok) {
-                     throw new Error('Network response was not ok');
-                 }
-                 return response.text();
-             })
-             .then(text => {
-                 let data;
-                 try {
-                     data = JSON.parse(text);
-                 } catch (e) {
-                     console.error('Respuesta no es JSON válido:', text);
-                     return;
-                 }
-                 const notificationList = document.querySelector('.notification-list');
-                 notificationList.innerHTML = '';
+    function loadNotifications() {
+        fetch('get_notifications.php')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(text => {
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Respuesta no es JSON válido:', text);
+                    return;
+                }
+                const notificationList = document.querySelector('.notification-list');
+                notificationList.innerHTML = '';
 
-                 if (!Array.isArray(data) || data.length === 0) {
-                     notificationList.innerHTML = '<li><a class="dropdown-item" href="#">No hay notificaciones nuevas</a></li>';
-                 } else {
-                     data.forEach(notification => {
-                         const notificationItem = document.createElement('li');
-                         notificationItem.innerHTML = `
+                if (!Array.isArray(data) || data.length === 0) {
+                    notificationList.innerHTML = '<li><a class="dropdown-item" href="#">No hay notificaciones nuevas</a></li>';
+                } else {
+                    data.forEach(notification => {
+                        const notificationItem = document.createElement('li');
+                        notificationItem.innerHTML = `
                         <a class="dropdown-item notification-item" href="#" data-id="${notification.id_notificacion}">
                             ${notification.mensaje}
                             <small class="text-muted d-block">${new Date(notification.fecha_envio).toLocaleString()}</small>
                         </a>
                     `;
-                         notificationList.appendChild(notificationItem);
-                     });
-                 }
+                        notificationList.appendChild(notificationItem);
+                    });
+                }
 
-                 updateNotificationCounter();
-             })
-             .catch(error => console.error('Error:', error));
-     }
+                updateNotificationCounter();
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-     function markAsRead(notificationId) {
-         fetch('mark_as_read.php', {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'application/json',
-                 },
-                 body: JSON.stringify({
-                     id: notificationId
-                 })
-             })
-             .then(response => response.json())
-             .then(data => {
-                 if (!data.success) {
-                     console.error('Error al marcar como leída');
-                 }
-             })
-             .catch(error => console.error('Error:', error));
-     }
+    function markAsRead(notificationId) {
+        fetch('mark_as_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: notificationId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Error al marcar como leída');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-     function updateNotificationCounter() {
-         fetch('count_unread_notifications.php')
-             .then(response => response.json())
-             .then(data => {
-                 const counter = document.querySelector('.notification-counter');
-                 counter.textContent = data.count;
+    function updateNotificationCounter() {
+        fetch('count_unread_notifications.php')
+            .then(response => response.json())
+            .then(data => {
+                const counter = document.querySelector('.notification-counter');
+                counter.textContent = data.count;
 
-                 if (data.count > 0) {
-                     counter.classList.remove('d-none');
-                     counter.classList.add('bg-danger');
-                 } else {
-                     counter.classList.add('d-none');
-                 }
-             })
-             .catch(error => console.error('Error:', error));
-     }
+                if (data.count > 0) {
+                    counter.classList.remove('d-none');
+                    counter.classList.add('bg-danger');
+                } else {
+                    counter.classList.add('d-none');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
-     // Actualizar el contador periódicamente
-     setInterval(updateNotificationCounter, 30000); // Cada 30 segundos
- </script>
+    // Actualizar el contador periódicamente
+    setInterval(updateNotificationCounter, 30000); // Cada 30 segundos
+</script>

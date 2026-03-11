@@ -22,14 +22,21 @@ class SpaAdmin {
         }
         
         // Verificar solapamiento con otras citas
+        // Una cita solapa si:
+        // 1. La nueva cita empieza durante una cita existente
+        // 2. La nueva cita termina durante una cita existente
+        // 3. La nueva cita contiene completamente una cita existente
         $query = "SELECT COUNT(*) as count FROM Citas 
-                 WHERE (
-                     (:start BETWEEN fecha_hora AND DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) OR
-                     (:end BETWEEN fecha_hora AND DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) OR
-                     (fecha_hora BETWEEN :start AND :end)
+                 WHERE DATE(fecha_hora) = :fecha
+                 AND (
+                     (:start >= fecha_hora AND :start < DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) OR
+                     (:end > fecha_hora AND :end <= DATE_ADD(fecha_hora, INTERVAL duracion MINUTE)) OR
+                     (fecha_hora >= :start AND fecha_hora < :end)
                  ) AND estado IN ('pendiente', 'confirmada')";
         
         $stmt = $conn->prepare($query);
+        $fecha = date('Y-m-d', strtotime($startDateTime));
+        $stmt->bindParam(':fecha', $fecha);
         $stmt->bindParam(':start', $startDateTime);
         $stmt->bindParam(':end', $endDateTime);
         $stmt->execute();
@@ -44,25 +51,33 @@ class SpaAdmin {
         $startTime = date('H:i', strtotime($start));
         $endTime = date('H:i', strtotime($end));
         
-        if ($dayOfWeek == 6) { // Sábado
-            return ($startTime >= '17:00' && $endTime <= '20:30');
-        } elseif ($dayOfWeek == 7) { // Domingo
-            return ($startTime >= '10:00' && $endTime <= '20:00');
+        if ($dayOfWeek == 6) { // Sábado: 5:30pm a 8:00pm
+            return ($startTime >= '17:30' && $endTime <= '20:00');
+        } elseif ($dayOfWeek == 7) { // Domingo: 10:00am a 6:00pm
+            return ($startTime >= '10:00' && $endTime <= '18:00');
         }
         
         return false; // No se atiende otros días
     }
 
-    // Obtener horarios disponibles para un día
-    public function getAvailableSlots($date) {
+    // Obtener horarios disponibles para un día con duración específica
+    public function getAvailableSlots($date, $duration = 50) {
         $dayOfWeek = date('N', strtotime($date));
         
-        if ($dayOfWeek == 6) { // Sábado
-            $start = '17:00';
-            $end = '20:30';
-        } elseif ($dayOfWeek == 7) { // Domingo
-            $start = '10:00';
+        // Redondear duraciones: 50min -> 60min, 80min -> 90min, otros se dejan igual
+        $roundedDuration = $duration;
+        if ($duration == 50) {
+            $roundedDuration = 60;
+        } elseif ($duration == 80) {
+            $roundedDuration = 90;
+        }
+        
+        if ($dayOfWeek == 6) { // Sábado: 5:30pm a 8:00pm
+            $start = '17:30';
             $end = '20:00';
+        } elseif ($dayOfWeek == 7) { // Domingo: 10:00am a 6:00pm
+            $start = '10:00';
+            $end = '18:00';
         } else {
             return array(); // No hay horario otros días
         }
@@ -73,19 +88,26 @@ class SpaAdmin {
         
         // Intervalos de 30 minutos
         while ($current <= $endTime) {
-            $slots[] = date('H:i', $current);
+            $timeSlot = date('H:i', $current);
+            
+            // Verificar si el servicio cabe en el horario de atención
+            $serviceEnd = strtotime("+{$roundedDuration} minutes", $current);
+            $businessEnd = strtotime("$date $end");
+            
+            // Solo agregar si el servicio termina antes del cierre
+            if ($serviceEnd <= $businessEnd) {
+                // Verificar disponibilidad
+                $isAvailable = $this->checkAvailability($date, $timeSlot, $roundedDuration);
+                $slots[] = array(
+                    'time' => $timeSlot,
+                    'available' => $isAvailable
+                );
+            }
+            
             $current = strtotime('+30 minutes', $current);
         }
         
-        // Filtrar slots ocupados
-        $availableSlots = array();
-        foreach ($slots as $slot) {
-            if ($this->checkAvailability($date, $slot, 30)) { // Asumiendo duración mínima de 30 min
-                $availableSlots[] = $slot;
-            }
-        }
-        
-        return $availableSlots;
+        return $slots;
     }
 
     // Crear nueva reservación

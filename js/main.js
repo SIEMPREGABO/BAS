@@ -332,6 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (modal) {
       const reservaForm = modal.querySelector('.reserva-form');
       const fechaInput = modal.querySelector('input[name="fecha"]');
+      console.log('Modal de reserva encontrado, inicializando lógica de reserva', fechaInput);
       const durationInitiallyRequired = duracionSelect ? duracionSelect.required : false;
 
       const formatDateForInput = (date) => {
@@ -398,6 +399,71 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fechaInput.setCustomValidity('');
         return true;
+      };
+
+      const updateAvailableTimeSlots = () => {
+        const horaSelect = document.getElementById('hora-select');
+        if (!horaSelect || !fechaInput || !duracionSelect) return;
+
+        const fecha = fechaInput.value;
+        const duracion = duracionSelect.value;
+
+        if (!fecha) {
+          horaSelect.innerHTML = '<option value="">Primero selecciona una fecha</option>';
+          horaSelect.disabled = true;
+          return;
+        }
+
+        if (!duracion) {
+          horaSelect.innerHTML = '<option value="">Primero selecciona una duración</option>';
+          horaSelect.disabled = true;
+          return;
+        }
+
+        // Mostrar mensaje de carga
+        horaSelect.innerHTML = '<option value="">Cargando horarios disponibles...</option>';
+        horaSelect.disabled = true;
+
+        // Hacer petición AJAX para obtener horarios disponibles
+        fetch(`get available_slots.php?fecha=${encodeURIComponent(fecha)}&duracion=${encodeURIComponent(duracion)}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log('Horarios disponibles recibidos:', data);
+            if (data.error) {
+              horaSelect.innerHTML = '<option value="">Error al cargar horarios</option>';
+              return;
+            }
+
+            if (data.length === 0) {
+              horaSelect.innerHTML = '<option value="">No hay horarios disponibles</option>';
+              return;
+            }
+
+            // Limpiar y agregar opción por defecto
+            horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+
+            // Agregar las opciones de horario
+            data.forEach(slot => {
+              console.log('Procesando slot:', slot);
+              const option = document.createElement('option');
+              option.value = slot.time;
+              option.textContent = slot.time;
+              
+              if (!slot.available) {
+                option.disabled = true;
+                option.textContent = `${slot.time} (No disponible)`;
+                option.style.color = '#999';
+              }
+              
+              horaSelect.appendChild(option);
+            });
+
+            horaSelect.disabled = false;
+          })
+          .catch(error => {
+            console.error('Error al cargar horarios:', error);
+            horaSelect.innerHTML = '<option value="">Error al cargar horarios</option>';
+          });
       };
 
       const isSelectedServicePackage = () => {
@@ -567,18 +633,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         syncDurationByService(isPackage, isFacial, duration);
+        
+        // Actualizar horarios disponibles si hay fecha y duración
+        setTimeout(() => {
+          updateAvailableTimeSlots();
+        }, 100);
       };
 
       if (servicioSelect) {
         servicioSelect.addEventListener('change', () => {
           syncDurationByService();
+          updateAvailableTimeSlots();
         });
       }
 
       if (fechaInput) {
         updateDateInputConstraints();
         fechaInput.addEventListener('input', validateFechaInput);
-        fechaInput.addEventListener('change', validateFechaInput);
+        fechaInput.addEventListener('change', function() {
+          validateFechaInput();
+          updateAvailableTimeSlots();
+        });
+      }
+
+      if (duracionSelect) {
+        duracionSelect.addEventListener('change', () => {
+          updateAvailableTimeSlots();
+        });
       }
 
       if (reservaForm && fechaInput) {
