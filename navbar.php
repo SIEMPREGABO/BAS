@@ -9,7 +9,6 @@
         --spa-hover: #e3f2ef;
     }
 
-    .navbar {}
 
     .navbar-brand {
         font-weight: bold;

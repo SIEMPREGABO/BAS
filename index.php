@@ -95,16 +95,16 @@ error_log("Iniciando procesamiento del formulario de reserva");
                             </div>
                         </div>
 
-                        <a href="#" class="btn-link service-more-link glightbox-link"
-                            data-service="<?= htmlspecialchars($serviceName) ?>"
-                            data-gallery="gallery-<?= $index ?>">
+                        <!-- <a href="#" class="btn-link service-more-link glightbox-link"
+                            data-service=""
+                            data-gallery="gallery-">
                             <i class="fa-solid fa-images"></i> Ver galería
-                        </a>
+                        </a> -->
 
                         <!-- Galería de imágenes (ocultas) -->
-                        <div class="service-gallery" style="display: none;" data-gallery-id="gallery-<?= $index ?>">
+                        <!-- <div class="service-gallery" style="display: none;" data-gallery-id="gallery-<?= $index ?>"> -->
                             <!-- Placeholder images - Reemplazar con imágenes reales -->
-                            <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+1"
+                            <!-- <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+1"
                                 class="glightbox"
                                 data-gallery="gallery-<?= $index ?>"
                                 data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 1"></a>
@@ -119,8 +119,8 @@ error_log("Iniciando procesamiento del formulario de reserva");
                             <a href="https://via.placeholder.com/800x600/d9a7a1/ffffff?text=<?= urlencode($serviceName) ?>+4"
                                 class="glightbox"
                                 data-gallery="gallery-<?= $index ?>"
-                                data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 4"></a>
-                        </div>
+                                data-title="<?= htmlspecialchars($serviceName) ?> - Imagen 4"></a> -->
+                        <!-- </div> -->
 
                         <!-- <a href="#" class="btn-link service-more-btn" data-service="<?= $index ?>">Ver más</a> -->
 
@@ -567,7 +567,7 @@ error_log("Iniciando procesamiento del formulario de reserva");
             </script>
         <?php endif; ?>
 
-        <button class="modal-close" type="button" aria-label="Cerrar" data-close="modal"><i class="fa-solid fa-x"></i></button>
+        <button class="modal-close" type="button" aria-label="Cerrar" data-close="modal">x</button>
         <h3 class="modal-title" id="reserva-title">Reserva tu Servicio</h3>
         <form id="reserva-form" class="reserva-form" method="POST">
             <div class="form-section">
